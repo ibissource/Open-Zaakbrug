@@ -1,0 +1,67 @@
+<Module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
+    <Adapter name="Zaken_GetZgwResultaatTypeByUrl"
+        active="${Zaken_GetZgwResultaatTypeByUrl.Active}"
+        description="">
+
+        <Receiver name="Zaken_GetZgwResultaatTypeByUrl">
+            <JavaListener name="Zaken_GetZgwResultaatTypeByUrl" returnedSessionKeys="Error" />
+        </Receiver>
+
+        <Pipeline>
+            <Exits>
+                <Exit name="EXIT" state="SUCCESS"/>
+                <Exit name="EXCEPTION" state="ERROR"/>
+            </Exits>
+
+            <SenderPipe name="GetAuthorizationHeaderForCatalogiApi"
+                getInputFromFixedValue="&lt;dummy/&gt;">
+                <IbisLocalSender
+                    name="GetAuthorizationHeaderForCatalogiApiSender"
+                    javaListener="GenerateAuthorizationHeaderForCatalogiApi"
+                    returnedSessionKeys="Error,Authorization">
+                </IbisLocalSender>
+                <Forward name="success" path="GetZgwResultaatTypeByUrlSender" />
+                <Forward name="exception" path="EXCEPTION" />
+            </SenderPipe>
+
+			<SenderPipe 
+                name="GetZgwResultaatTypeByUrlSender"
+                getInputFromFixedValue="&lt;dummy/&gt;">
+				<HttpSender 
+					name="GetZgwResultaatTypeByUrlHttpSender" 
+					methodType="GET"
+					headersParams="Authorization,Accept-Crs"
+                    timeout="${zaakbrug.zgw.catalogi-api.timeout}"
+                    maxExecuteRetries="5"
+				/>
+                <Param name="url" sessionKey="url" />
+                <Param name="Accept-Crs" value="EPSG:4326"/>
+                <Param name="Authorization"  sessionKey="Authorization" />
+                <Forward name="success" path="JsonToXml" />
+                <Forward name="exception" path="ErrorJsonToXml" />
+			</SenderPipe>
+            <JsonPipe name="ErrorJsonToXml">
+                <Forward name="success" path="buildErrorMsg" />
+            </JsonPipe>
+            <XsltPipe name="buildErrorMsg"
+                styleSheetName="Common/xsl/ParseNegativeHttpResult.xsl">
+                <Param name="senderPipeName" value="GetZgwResultaatTypeByUrlSender" />
+                <Forward name="success" path="EXCEPTION" />
+            </XsltPipe>
+
+            <JsonPipe 
+                name="JsonToXml">
+                <Forward name="success" path="UnwrapOpenZaakApiEnvelopeToSingle"/>
+            </JsonPipe>
+
+            <XsltPipe
+                name="UnwrapOpenZaakApiEnvelopeToSingle"
+                styleSheetName="Common/xsl/UnwrapOpenZaakApiEnvelopeToSingle.xslt"
+                >
+                <Param name="Type" value="ZgwRolType"/>
+                <Forward name="success" path="EXIT"/>
+                <Forward name="error" path="EXCEPTION"/>
+            </XsltPipe>
+        </Pipeline>
+    </Adapter>
+</Module>

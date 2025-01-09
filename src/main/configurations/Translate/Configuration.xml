@@ -47,6 +47,8 @@
   <!ENTITY GetZgwZaakByUrl                                SYSTEM "./Configuration_GetZgwZaakByUrl.xml">
   <!ENTITY GetZgwZaakInformatieObjectByEnkelvoudigInformatieObjectUrl      SYSTEM "./Configuration_GetZgwZaakInformatieObjectByEnkelvoudigInformatieObjectUrl.xml">
   <!ENTITY GetZgwZaakTypeByIdentificatie                  SYSTEM "./Configuration_GetZgwZaakTypeByIdentificatie.xml">
+  <!ENTITY GetZgwResultaatByUrl                           SYSTEM "./Configuration_Zaken_GetZgwResultaatByUrl.xml">
+  <!ENTITY GetZgwResultaatTypeByUrl                       SYSTEM "./Configuration_Zaken_GetZgwResultaatTypeByUrl.xml">
   <!ENTITY HandleZgwZaakInformatieObjecten                SYSTEM "./Configuration_HandleZgwZaakInformatieObjecten.xml">
   <!ENTITY ImportFromLocalFS                              SYSTEM "./Configuration_ImportFromLocalFS.xml"> 
   <!ENTITY ApplyTranslationProfileValueOverrides     SYSTEM "./Configuration_ApplyTranslationProfileValueOverrides.xml"> 
@@ -128,6 +130,8 @@
   &GetZgwZaakByUrl;
   &GetZgwZaakInformatieObjectByEnkelvoudigInformatieObjectUrl;
   &GetZgwZaakTypeByIdentificatie;
+  &GetZgwResultaatByUrl;
+  &GetZgwResultaatTypeByUrl;
   &HandleZgwZaakInformatieObjecten;
   &ImportFromLocalFS;
   &ApplyTranslationProfileValueOverrides;

@@ -26,15 +26,35 @@
                     <Param name="zaaktype" sessionKey="ZgwZaakType" xpathExpression="/ZgwZaakType/identificatie" />
                     <Param name="valueOverrideKeyRoot" value="zgw.zaken-api.zaken.ZgwZaak" />
                 </IbisLocalSender>
-                <Forward name="success" path="MapZdsZaakFromZgwZaak" />
+                <Forward name="success" path="ResultaatExists" />
             </SenderPipe>
 
-            <XsltPipe name="MapZdsZaakFromZgwZaak"
+            <XmlIfPipe name="ResultaatExists" getInputFromSessionKey="originalMessage" xpathExpression="//resultaat != ''">
+                <Forward name="then" path="GetZgwResultaatByUrlSender" />
+                <Forward name="else" path="MapZdsZaakFromZgwZaak" />
+            </XmlIfPipe>
+
+            <SenderPipe name="GetZgwResultaatByUrlSender" storeResultInSessionKey="Resultaat">
+                <IbisLocalSender name="GetZgwResultaatByUrlLocalSender" javaListener="Zaken_GetZgwResultaatByUrl">
+                    <Param name="url" sessionKey="ZgwZaak"
+                    xpathExpression="ZgwZaak/resultaat" />
+                </IbisLocalSender>
+            </SenderPipe>
+
+            <SenderPipe name="GetZgwResultaatTypeByUrlSender" storeResultInSessionKey="ResultaatType">
+                <IbisLocalSender name="GetZgwResultaatTypeByUrlLocalSender" javaListener="Zaken_GetZgwResultaatTypeByUrl">
+                    <Param name="url" xpathExpression="/root/resultaattype" />
+                </IbisLocalSender>
+            </SenderPipe>
+
+            <XsltPipe name="MapZdsZaakFromZgwZaak" getInputFromSessionKey="ZgwZaak"
                 storeResultInSessionKey="ZdsZaak"
                 styleSheetName="Common/xsl/GetZdsZaakFromZgwZaak.xslt"
                 >
                 <Param name="ZgwZaak" sessionKey="ZgwZaak" type="DOMDOC" />
                 <Param name="ExtraElementen" sessionKey="ExtraElementen" type="DOMDOC" />
+                <Param name="Resultaat" sessionKey="Resultaat" type="DOMDOC" defaultValue="&lt;Dummy/>" />
+                <Param name="ResultaatType" sessionKey="ResultaatType" type="DOMDOC" defaultValue="&lt;Dummy/>" />
                 <Forward name="success" path="GetGlobalConfigFromLocalFS" />
             </XsltPipe>
 
@@ -251,9 +271,8 @@
                 >
                 <Param name="With" sessionKey="ZdsHeeft" type="DOMDOC"/>
                 <Forward name="success" path="EXIT"/>
-                <Forward name="exception" path="EXCEPTION"/>
+                <Forward name="error" path="EXCEPTION"/>
             </XsltPipe>
-            
         </Pipeline>
     </Adapter>
 </Module>
