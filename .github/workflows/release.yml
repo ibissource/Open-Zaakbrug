@@ -40,7 +40,7 @@ jobs:
           GH_TOKEN: ${{ secrets.WEAREFRANK_BOT_PAT }}
 
   ci:
-    uses: wearefrank/ci-cd-templates/.github/workflows/ci-generic.yml@40908d8bac3a35504b4ed59d9c462ad715931fb0 #1.3.0
+    uses: wearefrank/ci-cd-templates/.github/workflows/ci-generic.yml@fcd9bc33af82f29f162307f8c30433b8730b6a01 #1.4.0
     needs: analyze-commits
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
@@ -172,7 +172,7 @@ jobs:
           GH_TOKEN: ${{ secrets.WEAREFRANK_BOT_PAT }}
 
   docker-release:
-    uses: wearefrank/ci-cd-templates/.github/workflows/docker-release-generic.yml@40908d8bac3a35504b4ed59d9c462ad715931fb0 #1.3.0
+    uses: wearefrank/ci-cd-templates/.github/workflows/docker-release-generic.yml@fcd9bc33af82f29f162307f8c30433b8730b6a01 #1.4.0
     needs: 
     - analyze-commits
     - release
@@ -202,4 +202,4 @@ jobs:
       - release
     # Set to true to enable Docusaurus publishing to GitHub Pages
     if: true
-    uses: wearefrank/ci-cd-templates/.github/workflows/docusaurus-release.yml@40908d8bac3a35504b4ed59d9c462ad715931fb0 #1.3.0
+    uses: wearefrank/ci-cd-templates/.github/workflows/docusaurus-release.yml@fcd9bc33af82f29f162307f8c30433b8730b6a01 #1.4.0
